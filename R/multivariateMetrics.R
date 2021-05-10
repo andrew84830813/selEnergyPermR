@@ -209,7 +209,7 @@ featureSlectionPerformance = function(tbl,
     krus.test_df$p.adjust = p.adjust(krus.test_df$pval,method = "BH")
     pval_level = 0.05
     fdrLevel =  max(krus.test_df$p.adjust[krus.test_df$pval <= pval_level])
-    krus.test_df$signf = if_else(krus.test_df$p.adjust>0.05,F,T)
+    krus.test_df$signf = dplyr::if_else(krus.test_df$p.adjust>0.05,F,T)
     #Importance df
     imp.df = data.frame(Ratio = krus.test_df$Ratio,Imp = krus.test_df$Statistic)
     keyRats = tidyr::separate(imp.df,1,into = c("Num","Denom"),sep = "___",remove = F)
@@ -217,7 +217,7 @@ featureSlectionPerformance = function(tbl,
     g = igraph::graph_from_edgelist(as.matrix(el_[,1:2]),directed = T)
     g = igraph::simplify(g, remove.loops = TRUE,
                          edge.attr.comb = igraph_opt("edge.attr.comb"))
-    E(g)$weight = if_else((imp.df$Imp)<0,0,(imp.df$Imp))
+    E(g)$weight = dplyr::if_else((imp.df$Imp)<0,0,(imp.df$Imp))
 
     ns = igraph::diameter(g)/length(igraph::strength(g))
     netStr = length(igraph::strength(g))
