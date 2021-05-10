@@ -78,7 +78,6 @@ etest2 <-
 #'
 #' Computes various multivariate statistics to be used in permutation testing
 #'
-#' @useDynLib selEnergyPermR
 #'
 #' @importFrom magrittr %>%
 #'
@@ -157,7 +156,7 @@ featureSlectionPerformance = function(tbl,
 
   #scaled mds e stat
   energy_aitch = energy::eqdist.e(x = mds_dist,sizes = W$Count.Freq,distance = T)
-  estat = energy_aitch$statistic
+  estat = energy_aitch
   # ii = energy_aitch$perms
   EnergyE_mds = estat#as.numeric((estat-mean(ii))/sd(ii)) ##
 
@@ -170,8 +169,7 @@ featureSlectionPerformance = function(tbl,
 
 
   ## Energy disco
-  mat.ph = data.frame(tbl) %>%
-    dplyr::arrange(desc(Status))
+  mat.ph =  dplyr::arrange(data.frame(tbl),desc(Status))
   mat.ph[,1] = factor(mat.ph[,1])
   levs = data.frame(Labels = unique(mat.ph[,1]))
   labels = mat.ph[,1]
