@@ -7,7 +7,7 @@
 stageData(featureMatrix, labels, permuteLabel = F, permuteFeatures = F)
 }
 \arguments{
-\item{featureMatrix}{a samples x features data.frame with count or relative abundance data}
+\item{featureMatrix}{a n-samples x p-features data.frame with count or relative abundance data}
 
 \item{labels}{class labels for data}
 

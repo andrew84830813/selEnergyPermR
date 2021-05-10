@@ -77,6 +77,32 @@ fastImputeZeroes <-
   }
 
 
+#' Get non-sparse feature
+#'
+#'
+#' Computes names of features present above a thresold
+#'
+#' @param compmat a matrix/data.frame with counts (sample x features)
+#' @param mxSparsePercent thresold for percent of samples a feature must be present with at least 1 count
+#' @param ncountRequired number or counts to consider a feature as present
+#'
+#' @examples
+#' getFeats_bySparsity()
+#'
+#' @references
+#'
+#'
+#' @return A vector of colnames of non sparse features to keep
+#'
+#' @export
+getFeats_bySparsity <-
+  function(compmat,mxSparsePercent = .5,ncountRequired = 1){
+    zeroFeats = compmat<ncountRequired
+    zeroFeats = colSums(zeroFeats)
+    sparseThreshold = round(mxSparsePercent*nrow(compmat))
+    keep = zeroFeats[zeroFeats<=sparseThreshold]
+    return(names(keep))
+  }
 
 #' Calculate select log-ratios
 #'
@@ -108,6 +134,53 @@ getLogRatios <-
 
     #Map Num and denom feature locations
     num = data.frame(f = ratioList[,1])
+  }
+
+
+#' Wrapper function for removing spasre features from count data prior to log ratio analysis
+#'
+#'
+#' Removes sparse features based on a provided threshold,computes \eqn{\delta} impute factor for zero impuation and returns the minority and majority class for binary group data
+#'
+#' @param tbl a n-samples x p-features data.frame with count or relative abundance data
+#' @param minPrevalence class labels for data
+#' @param permuteLabel should lass labels be permuted
+#'
+#' @examples
+#' processCompData()
+#'
+#' @references
+#'
+#'
+#' @return A list containing:\tabular{ll}{
+#'    \code{processedData} \tab a data.frame where the first column contains class labels and the remaining p columns are features \cr
+#'    \tab \cr
+#'    \code{impFactor} \tab A vector of class lables \cr
+#'    \tab \cr
+#'    \code{minClss} \tab A vector of class lables \cr
+#'    \tab \cr
+#'    \code{majClass} \tab A vector of class lables \cr
+#' }
+#' @export
+processCompData <-
+  function(tbl,minPrevalence = 0.9,permuteLabel = F){
+    print(table(tbl[,1]))
+    minorityClass = names(which.min(table(tbl[,1])))
+    majorityClass = as.character(unique(tbl[tbl[,1]!=minorityClass,1]))
+    keep = getFeats_bySparsity(tbl[,-1],mxSparsePercent = minPrevalence)
+    fcol = colnames(tbl)[1]
+    tbl = subset(tbl,select = c(fcol,keep))
+    tbl = tbl[rowSums(tbl[,-1])>0,]
+    factor = 1
+    ph = compositions::clo(tbl[,-1])
+    impFact = min(ph[ph>0]) / factor
+    tbl = data.frame(Status = factor(tbl[,1]), tbl[,-1]   )
+    #permuteLabels
+    permuteLabel = F
+    if(permuteLabel==T){
+      tbl$Status = sample(tbl$Status)
+    }
+    return(list(processedData = tbl,impFactor = impFact,minClss = minorityClass,majClass = majorityClass))
   }
 
 
