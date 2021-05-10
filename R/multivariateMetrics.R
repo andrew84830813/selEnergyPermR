@@ -3,6 +3,8 @@
 #'
 #' Modifies the energy::eqdist.etest to return permuation distribution
 #'
+#' @useDynLib selEnergyPermR
+#'
 #' @param x sorted matrix with n-samples
 #' @param sizes class sizes
 #' @param distance is a distance matrix
@@ -75,6 +77,8 @@ etest2 <-
 #'
 #'
 #' Computes various multivariate statistics to be used in permutation testing
+#'
+#' @useDynLib selEnergyPermR
 #'
 #' @importFrom magrittr %>%
 #'
