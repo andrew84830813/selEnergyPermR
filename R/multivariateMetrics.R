@@ -129,10 +129,10 @@ featureSlectionPerformance = function(tbl,
   W = dplyr::left_join(c.df,W)
   N = sum(W$Count.Freq)
   d = parallelDist::parDist(as.matrix(mat[,-1])) ## p here is eqv to the alpha in the (rizzo/szekely - energy distanmce advanced review feb 2016 review paper)
-  energy_aitch = etest2(x = d,sizes = W$Count.Freq,distance = T,R = nreps_energy)
-  estat = energy_aitch$statistic
-  ii = energy_aitch$perms
-  allFeatures_scaledF = as.numeric((estat-mean(ii))/sd(ii)) ##
+  energy_aitch = energy::eqdist.e(x = d,sizes = W$Count.Freq,distance = T,R = 2)
+  # estat = energy_aitch$statistic
+  # ii = energy_aitch$perms
+  allFeatures_scaledF = energy_aitch$statistic#as.numeric((estat-mean(ii))/sd(ii)) ##
 
 
 
@@ -157,10 +157,10 @@ featureSlectionPerformance = function(tbl,
   pmv_mds = vegan::adonis2(mds_dist~Type,data = a.df,permutations = 0)
 
   #scaled mds e stat
-  energy_aitch = etest2(x = mds_dist,sizes = W$Count.Freq,distance = T,R = nreps_energy)
+  energy_aitch = etest2(x = mds_dist,sizes = W$Count.Freq,distance = T,R = 2)
   estat = energy_aitch$statistic
   ii = energy_aitch$perms
-  scaledEnergyE_mds = as.numeric((estat-mean(ii))/sd(ii)) ##
+  scaledEnergyE_mds = estat#as.numeric((estat-mean(ii))/sd(ii)) ##
 
 
 
