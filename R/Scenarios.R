@@ -1,9 +1,164 @@
+#' Scenario-1:     Large Location shift and COvariance shift using Dirichilet Distribution
+#'
+#'
+#' Simulate data for two classes using scenario-1(Hinton (2021)). Data are sampled from the Dirichilet with different alpha vectors
+#'
+#' @param n1 number of sample in class 1
+#' @param n2 number of samples in class 2
+#' @param dms_ number of features
+#' @param seed random seed
+#'
+#' @examples
+#' scenario2(n1=40,n2=40,dms_ = 75)
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data from two classes
+#'
+#' @export
+scenario1 <-
+  function( n1 = 30 ,n2 = 30, dms_ = 75,seed){
+
+    a = rep(1,dms_)
+    a = a
+    expectedScale = dms_
+    scale = sum(a)
+    scaleRatio = scale/(dms_)
+    set.seed(seed)
+    s1 = sampleDirichlet(n1 = n1,dims = dms_,sampleName = "S1",a1 = a*3)$Sample
+    s2 = sampleDirichlet(n1 = n2,dims = dms_,sampleName = "S2",a1 = a*(log(dms_)/5))$Sample
+    df = rbind(s1,s2)
+
+    return(df)
+
+  }
+
+
+#' Scenario-2:  Sparse Location shift in single component of Dirichilet Distribution
+#'
+#'
+#' Simulate data for two classes using scenario-2(Hinton (2021)). Data are sampled from the Dirichilet and converted to counts where library size is sample from a negative binomial dsitribution
+#'
+#' @param n1 number of sample in class 1
+#' @param n2 number of samples in class 2
+#' @param dms_ number of features
+#' @param seed random seed
+#'
+#' @examples
+#' scenario2(n1=40,n2=40,dms_ = 75)
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data from two classes
+#'
+#' @export
+scenario2 <-
+  function( n1 = 30 , n2 = 30,dms_ = 75,seed,avgReads = 1e7,size_ = 1){
+
+    set.seed(seed)
+    factScale = 0.01
+
+    libSize = rnbinom(n = n1,size = size_,mu = avgReads)
+    s1 = data.frame()
+    for(n in 1:n1){
+      t25 = 10
+      a = rep(runif(n = dms_,min = 1,max = 5))
+      a[1] = runif(1,3000,5000)
+      #a[2] = runif(1,9000,12500)
+      for (i in 2:t25) {
+        a[i] = runif(1,500,1500)
+      }
+      #Random Sparsty
+      a[t25:dms_] = sample(a[t25:dms_],replace = F)
+      ph = sampleDirichlet(n1 = 2,dims = dms_,sampleName = "S1",a1 = a*factScale)$Sample[1,]
+      ph = round(as.numeric(ph[1,-1])*libSize[n])
+      ph = data.frame(Status = "S1",t(ph))
+      s1 = rbind(s1,ph)
+    }
+
+
+    libSize = rnbinom(n = n2,size = size_,mu = avgReads)
+    s2 = data.frame()
+    for(n in 1:n2){
+      t25 = 10
+      a = rep(runif(n = dms_,min = 1,max = 5))
+      a[1] = runif(1,12500,17500)
+      for (i in 2:t25) {
+        a[i] = runif(1,500,1500)
+      }
+      #Random Sparsty
+      a[t25:dms_] = sample(a[t25:dms_],replace = F)
+      ph = sampleDirichlet(n1 = 2,dims = dms_,sampleName = "S2",a1 = a*factScale)$Sample[1,]
+      ph = round(as.numeric(ph[1,-1])*libSize[n])
+      ph = data.frame(Status = "S2",t(ph))
+      s2 = rbind(s2,ph)
+    }
+
+    df = rbind(s1,s2)
+
+    return(df)
+  }
+
+
+
+#' Scenario-3:  Large location shift, and small covariance difference from an additive logistics normal distribtion
+#'
+#'
+#' Simulate data for two classes using scenario-2(Hinton (2021)). Data are sampled from the additive logistics normal distribution (see Aitichinson (1986))
+#'
+#' @param n1 number of sample in class 1
+#' @param n2 number of samples in class 2
+#' @param dms_ number of features
+#' @param seed random seed
+#'
+#' @examples
+#' scenario3(n1=40,n2=40,dms_ = 75)
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data from two classes
+#'
+#' @export
+scenario3 <-
+  function( n1 = 30 , n2 = 30, dms_ = 75,seed){
+
+    set.seed(seed)
+    mu_ = rep(0,dms_)
+    t25 = round(dms_*.25)
+    mu2 = rep(0,dms_)
+    mu2[1:t25] = 1/sqrt(dms_)
+    sigma_ = diag(dms_)
+
+    diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
+    sigma_ = t(sigma_)
+    diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
+    sigma_ = nearPD(sigma_)$mat
+
+    U = matrix(runif(dms_*dms_,0,32/(dms_^2)),nrow = dms_)
+    U_ = sigma_ + U
+    U_ = nearPD(U_)$mat
+    eg = min(eigen(as.matrix(sigma_))$values)
+    sig = min(eigen(as.matrix(U_))$values)
+    dd = min(eg,sig)+0.05
+    sig1 = nearPD( sigma_ + dd*diag(dms_) )$mat
+    sig2 = nearPD( sigma_+ U + dd*diag(dms_) )$mat
+
+    s1 = sampleAddLogisticNormal(n = n1,dims_ = dms_,mu = mu_ ,sigma = sig1,sigmaScale = 1,sampleName = "S1")
+    s2 = sampleAddLogisticNormal(n = n2,dims_ = dms_,mu = mu2,sigma = sig2,sigmaScale = 1,sampleName = "S2")
+    df = rbind(s1,s2)
+  }
+
+
+
 
 
 #' Scenario-4:  Location shift in single component of additive logistics normal distribution
 #'
 #'
-#' Simulate data from two classes using scenario-4. Data are sampled from the additive logistics normal distribution (see Aitichinson (1986))
+#' Simulate data from two classes using scenario-4 (Hinton (2021)). Data are sampled from the additive logistics normal distribution (see Aitichinson (1986))
 #'
 #' @param n1 number of sample in class 1
 #' @param n2 number of samples in class 2
@@ -48,6 +203,98 @@ scenario4 <-
   }
 
 
+
+
+#' Scenario-5:  No Location shift with large covariance difference using additive logistics normal distribution
+#'
+#'
+#' Simulate data from two classes using scenario-5 (Hinton (2021)). Data are sampled from the additive logistics normal distribution (see Aitichinson (1986))
+#'
+#' @param n1 number of sample in class 1
+#' @param n2 number of samples in class 2
+#' @param dms_ number of features
+#' @param seed random seed
+#'
+#' @examples
+#' scenario5(n1=40,n2=40,dms_ = 75)
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data from two classes
+#'
+#' @export
+scenario5 <-
+  function( n1 = 30 , n2 = 30, dms_ = 75,seed){
+
+    set.seed(seed)
+    mu_ = rep(1,dms_)
+    #t25 = round(dms_*.25)
+    mu2 = rep(1/sqrt(n1+n2),dms_)
+    # mu2[1:t25] = 0
+    sigma_ = diag(dms_)
+
+    diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
+    sigma_ = t(sigma_)
+    diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
+    sigma_ = nearPD(sigma_)$mat
+
+    U = matrix(runif(dms_*dms_,0,32),nrow = dms_)
+    U_ = sigma_ + U
+    U_ = nearPD(U_)$mat
+    eg = min(eigen(as.matrix(sigma_))$values)
+    sig = min(eigen(as.matrix(U_))$values)
+    dd = min(eg,sig)+0.05
+    sig1 = nearPD( sigma_ + dd*diag(dms_) )$mat
+    sig2 = nearPD( sigma_+ U + dd*diag(dms_) )$mat
+
+    s1 = sampleAddLogisticNormal(n = n1,dims_ = dms_,mu = mu_ ,sigma = sig1,sigmaScale = 1,sampleName = "S1")
+    s2 = sampleAddLogisticNormal(n = n2,dims_ = dms_,mu = mu2,sigma = sig2,sigmaScale = 1,sampleName = "S2")
+    df = rbind(s1,s2)
+  }
+
+
+
+#' Sample from Additive Logisitcs Normal
+#'
+#'
+#' Simulate data from additive logistics normal distribution (see Aitichinson (1986))
+#'
+#' @param n1 number of samples
+#' @param dims number of features/dimensions
+#' @param a1 alpha vector of dirichiliet distribution
+#' @param sampleName class names for data
+#'
+#' @examples
+#' sampleDirichlet()
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data
+#'
+#' @export
+#'
+sampleDirichlet <-
+  function(n1,dims,a1,sampleName){
+
+    mean1 = sapply(1:dims,function(x) a1[x]/sum(a1))
+    variance1 = sapply(1:dims,function(x) {
+      a0 = sum(a1)
+      ai = a1[x]/a0
+      (ai*(1-ai)) / (a0+1)
+    } )
+
+    a0 = sum(a1)
+    entropy1 = log(prod(gamma(a1))/gamma(sum(a1))) + (a0-length(a1))*digamma(a0) - sum(sapply(1:dims, function(x) (a1[x]-1)*digamma(a1[x])))
+
+    s1 = data.frame(Status = sampleName,compositions::rDirichlet.acomp(n1,a1))
+    return(list(Sample = s1,mean = mean1,variance = variance1,entropy = entropy1))
+
+  }
+
+
+
 #' Sample from Additive Logisitcs Normal
 #'
 #'
@@ -77,3 +324,135 @@ sampleAddLogisticNormal <-
     s1  = data.frame(Status = sampleName,y1)
     return(s1)
   }
+
+
+
+#' Simulate large covaraince shift from empirical data
+#'
+#'
+#' Simulate  covariance shift in data assuming  count data are distributied as an additive logistics normal distribution on the simplex (see Aitichinson (1986))
+#'
+#' @param raMatrix empirical relative abundance matrix
+#' @param n1 number of samples class 1
+#' @param n2 number of samples class 2
+#' @param maxCov xxx
+#' @param perFixedFeatures xxx
+#' @param shiftPercent xxx
+#'
+#' @examples
+#' simFromExpData.covarianceShift()
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data
+#'
+#' @export
+#'
+simFromExpData.covarianceShift <-
+  function( raMatrix ,n1 = 30 , n2 = 30,maxCov = 32,seed= 08272008,perFixedFeatures = .8,shiftPercent = 1.25){
+
+    set.seed(seed)
+
+
+    y.alr = easyCODA::ALR( raMatrix )$LR
+    alr.cov = cov(y.alr)
+    var.alr = data.frame(ratio = names(diag(alr.cov)),var = diag(alr.cov)) %>%
+      arrange(-var)
+    y.alr = subset(y.alr,select = var.alr$ratio)
+    alr.mean = colMeans(y.alr)
+    sigma_ = cov(y.alr)
+    nfeats = length(alr.mean)
+
+
+    # #Adjust cov matrices
+    U = matrix(runif(nfeats*nfeats,0,maxCov ),nrow = nfeats)
+    U_ = sigma_ + U
+    U_ = nearPD(U_)$mat
+    eg = min(eigen(as.matrix(sigma_))$values)
+    sig = min(eigen(as.matrix(U_))$values)
+    dd = min(eg,sig)+0.05
+    sig1 = Matrix::nearPD( sigma_ + dd*diag(nfeats) )$mat
+    sig2 = Matrix::nearPD( sigma_+ U + dd*diag(nfeats) )$mat
+
+    #Sample1
+    alr.mean = colMeans(y.alr)
+    alr.sim = MASS::mvrnorm(n = n1,mu = alr.mean,Sigma = sig1)
+    alr.mean2 = colMeans(alr.sim)
+    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    s1 = data.frame(Status = "S1",alr.ra)
+
+
+    #Sample2
+    hold = round(length(alr.mean2)*perFixedFeatures)
+    alr.mean2[(hold+1):nfeats] = shiftPercent * alr.mean[(hold+1):nfeats]
+    alr.sim = MASS::mvrnorm(n = n2,mu = alr.mean2,Sigma = sig2)
+    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    s2 = data.frame(Status = "S2",alr.ra)
+
+
+    rbind(s1,s2)
+  }
+
+
+
+
+#' Simulate location shift in mean vector of Additive logistics normal distribution
+#'
+#'
+#' Simulate  location shift in data assuming  count data are distributied as an additive logistics normal distribution on the simplex (see Aitichinson (1986))
+#'
+#' @param raMatrix empirical relative abundance matrix
+#' @param n1 number of samples class 1
+#' @param n2 number of samples class 2
+#' @param perFixedFeatures xxx
+#' @param shiftPercent xxx
+#'
+#' @examples
+#' simFromExpData.largeMeanShft()
+#'
+#' @references
+#' Aitchinson, J 1986
+#'
+#' @return A data frame with simulated data
+#'
+#' @export
+#'
+simFromExpData.largeMeanShft <-
+  function( raMatrix ,n1 = 30 , n2 = 30,perFixedFeatures = 0.95,featureShiftPercent = 1.25,seed = 08272008){
+    set.seed(seed)
+    y.alr = easyCODA::ALR( raMatrix )$LR
+    alr.cov = cov(y.alr)
+    var.alr = data.frame(ratio = names(diag(alr.cov)),var = diag(alr.cov)) %>%
+      arrange(-var)
+    y.alr = subset(y.alr,select = var.alr$ratio)
+    alr.mean = colMeans(y.alr)
+    alr.cov = cov(y.alr)
+    cv = mean(abs(sd(var.alr$var)/alr.mean))
+
+
+    alr.sim = MASS::mvrnorm(n = n1,mu = alr.mean,Sigma = alr.cov)
+    alr.mean2 = colMeans(alr.sim)
+    alr.cov = cov(alr.sim)
+    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    s1 = data.frame(Status = "S1",alr.ra)
+
+    ####
+    nfeats = length(alr.mean)
+    hold = round(length(alr.mean2)*perFixedFeatures)
+    alr.mean2[(hold+1):nfeats] = featureShiftPercent * alr.mean[(hold+1):nfeats]
+    alr.sim = MASS::mvrnorm(n = n2,mu = alr.mean2,Sigma = alr.cov)
+    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    s2 = data.frame(Status = "S2",alr.ra)
+    ####
+
+    # ## Real data =
+    # sreal = data.frame(Status = "Real",dat[,-1])
+    # df = rbind(s1,sreal)
+    # ###########################
+
+
+    rbind(s1,s2)
+  }
+
+
