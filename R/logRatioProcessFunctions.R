@@ -25,7 +25,7 @@ calcLogRatio <-
     mat[lower.tri(mat,diag = T)]=-1000000000000000000999
     mat = subset(reshape2::melt(mat),value!=-1000000000000000000999)
     mat = tidyr::unite(data = mat,col = Ratio,sep = "___",c("Var1","Var2"))
-    keyRats = dplyr::separate(data.frame(mat),1,into = c("Num","Denom"),sep = "___",remove = F)
+    keyRats = tidyr::separate(data.frame(mat),1,into = c("Num","Denom"),sep = "___",remove = F)
     el_= data.frame(keyRats$Num,keyRats$Denom,keyRats$Ratio)
     df1 = data.frame(Status = df[,1], getLogRatios(z = df2,ratioList  = el_))
 
@@ -121,7 +121,7 @@ getFeats_bySparsity <-
 #'
 #' @export
 getLogRatios <-
-  function(z,ratioList){
+  function(z,ratioList,weighted = F){
     #Check To make sure status variable is removed
     if(sum(colnames(z)=="Status")>0){
       c = which(colnames(z)=="Status")
@@ -133,8 +133,31 @@ getLogRatios <-
 
     #Map Num and denom feature locations
     num = data.frame(f = ratioList[,1])
-  }
+    num = left_join(num,features)
+    den = data.frame(f = ratioList[,2])
+    den = left_join(den,features)
 
+    #num and denom feature table with location
+    c = cbind(num,den)
+
+    if(weighted==T){
+      #weights
+      cm = colMeans(z)
+      #compute logratios
+      s=lapply(1:nrow(c), function(x) cm[c[x,2]] * cm[c[x,4]] * log( z[,c[x,2]] / z[,c[x,4]] ) )
+      s = as.data.table(s)
+      colnames(s) = as.character(ratioList[,3])
+      s = as.data.frame(s)
+    }else{
+      #compute logratios
+      s=lapply(1:nrow(c), function(x) log( z[,c[x,2]] / z[,c[x,4]] ) )
+      s = as.data.table(s)
+      colnames(s) = as.character(ratioList[,3])
+      s = as.data.frame(s)
+    }
+
+    return(s)
+  }
 
 #' Wrapper function for removing spasre features from count data prior to log ratio analysis
 #'
