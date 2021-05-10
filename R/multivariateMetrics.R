@@ -291,7 +291,7 @@ featureSlectionPerformance = function(tbl,
 #' @export
 normalizedEnergy <-
   function(lrMat,labels){
-    mat = arrange(data.frame(Labels = labels,lrMat),desc(Labels))
+    mat = dplyr::arrange(data.frame(Labels = labels,lrMat),desc(Labels))
 
     classes = unique(labels)
     cc = combinat::combn2(as.character(classes))
