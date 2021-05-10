@@ -126,7 +126,7 @@ featureSlectionPerformance = function(tbl,
   labels = tbl$Status
   c.df = data.frame(Count.labels = classes)
   W = data.frame(Count = (table(labels)),Weight = compositions::clo(table(labels)))
-  W = left_join(c.df,W)
+  W = dplyr::left_join(c.df,W)
   N = sum(W$Count.Freq)
   d = parallelDist::parDist(as.matrix(mat[,-1])) ## p here is eqv to the alpha in the (rizzo/szekely - energy distanmce advanced review feb 2016 review paper)
   energy_aitch = etest2(x = d,sizes = W$Count.Freq,distance = T,R = nreps_energy)
@@ -178,7 +178,7 @@ featureSlectionPerformance = function(tbl,
   labels = mat.ph[,1]
   tb = data.frame((table(mat.ph[,1] )))
   colnames(tb)[1] = "Labels"
-  sz = left_join(levs,tb)
+  sz = dplyr::left_join(levs,tb)
   d1 = dist(mat.ph[,-1])
   #energy::eqdist.etest(d,sizes = sz$Freq,distance = T,R = 100,method = "discoB")
   enf = energy::disco(x = d1,factors = mat.ph$Status,distance = T,R = 2)
@@ -312,7 +312,7 @@ normalizedEnergy <-
       labels = mat.ph$Labels
       tb = data.frame((table(mat.ph$Labels )))
       colnames(tb)[1] = "Labels"
-      sz = left_join(levs,tb)
+      sz = dplyr::left_join(levs,tb)
       ## Compute Distance
       d = parallelDist::parDist(as.matrix(mat.ph[,-1]),method = "minkowski",p=1.99) ## p here is eqv to the alpha in the (rizzo/szekely - energy distanmce advanced review feb 2016 review paper)
       d = as.matrix(d)
