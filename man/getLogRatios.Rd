@@ -4,7 +4,7 @@
 \alias{getLogRatios}
 \title{Calculate select log-ratios}
 \usage{
-getLogRatios(z, ratioList)
+getLogRatios(z, ratioList, weighted = F)
 }
 \arguments{
 \item{z}{a matrix/data.frame with imputed relative abundace data (sample x features)}

@@ -10,8 +10,6 @@ getFeats_bySparsity(compmat, mxSparsePercent = 0.5, ncountRequired = 1)
 \item{compmat}{a matrix/data.frame with counts (sample x features)}
 
 \item{mxSparsePercent}{thresold for percent of samples a feature must be present with at least 1 count}
-
-\item{ncountRequired}{number or counts to consider a feature as present}
 }
 \value{
 A vector of colnames of non sparse features to keep
