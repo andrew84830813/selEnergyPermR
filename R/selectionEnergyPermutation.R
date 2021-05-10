@@ -64,7 +64,8 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   lrs.scaled = scale(lrs.train[,-1])
   lrs.train = data.frame(Status = lrs.train[,1],lrs.scaled)
 
-  dcv  = diffCompVarRcpp::dcvScores(logRatioMatrix = lrs.train,includeInfoGain = dcv_useInfoGain,nfolds = dcv_nfold,numRepeats = dcv_numRepeats )
+  dcv  = diffCompVarRcpp::dcvScores(logRatioMatrix = lrs.train,includeInfoGain = dcv_useInfoGain,
+                                    nfolds = dcv_nfold,numRepeats = dcv_numRepeats,rankOrder = T )
   dcv_ = dcv$rawDCV
   keep = dcv$lrs
   end = which.max(keep$nDistinct)
@@ -84,7 +85,7 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   ## All features
   ##-----------------------------------------*
   cn = colnames(allFeats)
-  metrics = featureSlectionPerformance(data.frame(Status = labels,allFeats),plot_ = F,trainModel = F)
+  metrics = featureSlectionPerformance(tbl = data.frame(Status = labels,allFeats),plot_ = F)
   allFeatureMetrics = metrics$performance
   d.compdat = parallelDist::parDist(as.matrix(allFeats),method = "euclidean")
   a.df = data.frame(Type = labels)

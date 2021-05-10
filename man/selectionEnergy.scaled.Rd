@@ -51,6 +51,17 @@ A sparse non parametric association test for compositional/omics data  (Hinton (
 }
 \examples{
 selectionEnergy.scaled()
+Example parms:
+inputData = dat
+nreps_energy = 1e4
+eps = 1e-8
+targetFeats = NULL
+earlyStop = F
+patience = 25
+dcv_useInfoGain = T
+dcv_nfold = 5
+dcv_numRepeats = 1
+alpha = .05
 
 }
 \references{

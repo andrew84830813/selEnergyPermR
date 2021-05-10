@@ -7,7 +7,6 @@
 featureSlectionPerformance(
   tbl,
   plot_ = F,
-  trainModel = F,
   nreps_energy = 1e+05,
   Method_Name = "Feat_Selection",
   scaleData = T,

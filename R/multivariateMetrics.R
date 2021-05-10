@@ -103,7 +103,6 @@ etest2 <-
 #' @export
 featureSlectionPerformance = function(tbl,
                                       plot_=F,
-                                      trainModel=F,
                                       nreps_energy = 1e5,
                                       Method_Name = "Feat_Selection",
                                       scaleData = T,
@@ -115,8 +114,8 @@ featureSlectionPerformance = function(tbl,
   ##-------------------------*
 
   tbl[,1] = as.character(tbl[,1])
-  mat = data.frame(tbl) %>%
-    dplyr::arrange(desc(Status))
+  mat = dplyr::arrange(.data = data.frame(tbl),desc(Status))
+
   if(scaleData){
     mat[,-1] = scale(mat[,-1])
   }
@@ -132,14 +131,14 @@ featureSlectionPerformance = function(tbl,
   energy_aitch = energy::eqdist.e(x = d,sizes = W$Count.Freq,distance = T)
   # estat = energy_aitch$statistic
   # ii = energy_aitch$perms
-  allFeatures_eqdist = energy_aitch$statistic#as.numeric((estat-mean(ii))/sd(ii)) ##
+  allFeatures_eqdist = energy_aitch#as.numeric((estat-mean(ii))/sd(ii)) ##
 
 
 
   #dispersion test
   labels = mat[,1]
   mod = vegan::betadisper(d,group = labels)
-  bd = vegan::anova(mod)
+  bd = vegan::permutest(mod,permutations  = 2)
   #permanova
   a.df = data.frame(Type = labels)
   pmv = vegan::adonis2(d~Type,data = a.df,permutations = 0)
@@ -153,7 +152,7 @@ featureSlectionPerformance = function(tbl,
   mds_dist = dist((mds))
   normE_mds = normalizedEnergy(mds,labels)
   mod = vegan::betadisper(mds_dist,group = labels)
-  bd_mds = vegan::anova(mod)
+  bd_mds = vegan::permutest(mod)
   pmv_mds = vegan::adonis2(mds_dist~Type,data = a.df,permutations = 0)
 
   #scaled mds e stat
@@ -250,7 +249,7 @@ featureSlectionPerformance = function(tbl,
                               scaleEStat_mds = EnergyE_mds,
                               PermanovaF = pmv$F[1],
                               PermanovaF_mds = pmv_mds$F[1],
-                              betaDispF = bd$`F value`[1],
+                              betaDispF = bd$tab$F[1],
                               betaDispF_mds = bd_mds$`F value`[1],
                               AnosimR = ano$statistic,
                               EnergyF = enf$statistic,
@@ -295,8 +294,8 @@ featureSlectionPerformance = function(tbl,
 #' @export
 normalizedEnergy <-
   function(lrMat,labels){
-    mat = data.frame(Labels = labels,lrMat) %>%
-      arrange(desc(Labels))
+    mat = arrange(data.frame(Labels = labels,lrMat),desc(Labels))
+
     classes = unique(labels)
     cc = combinat::combn2(as.character(classes))
     W = data.frame(Count = (table(labels)),Weight = compositions::clo(table(labels)))
