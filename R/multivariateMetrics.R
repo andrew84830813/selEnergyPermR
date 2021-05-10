@@ -56,7 +56,7 @@ etest2 <-
     e0 <- 0
     repl <- rep(0, R)
     pval <- 1
-    b <- .C("ksampleEtest", x = as.double(t(x)), byrow = as.integer(1),
+    b <- .C("ksample.e", x = as.double(t(x)), byrow = as.integer(1),
             nsamples = as.integer(nsamples), sizes = as.integer(sizes),
             dim = as.integer(d), R = as.integer(R), e0 = as.double(e0),
             e = as.double(repl), pval = as.double(pval), PACKAGE = "energy")
