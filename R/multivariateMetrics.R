@@ -129,10 +129,10 @@ featureSlectionPerformance = function(tbl,
   W = dplyr::left_join(c.df,W)
   N = sum(W$Count.Freq)
   d = parallelDist::parDist(as.matrix(mat[,-1])) ## p here is eqv to the alpha in the (rizzo/szekely - energy distanmce advanced review feb 2016 review paper)
-  energy_aitch = energy::eqdist.e(x = d,sizes = W$Count.Freq,distance = T,R = 2)
+  energy_aitch = energy::eqdist.e(x = d,sizes = W$Count.Freq,distance = T)
   # estat = energy_aitch$statistic
   # ii = energy_aitch$perms
-  allFeatures_scaledF = energy_aitch$statistic#as.numeric((estat-mean(ii))/sd(ii)) ##
+  allFeatures_eqdist = energy_aitch$statistic#as.numeric((estat-mean(ii))/sd(ii)) ##
 
 
 
@@ -157,10 +157,10 @@ featureSlectionPerformance = function(tbl,
   pmv_mds = vegan::adonis2(mds_dist~Type,data = a.df,permutations = 0)
 
   #scaled mds e stat
-  energy_aitch = etest2(x = mds_dist,sizes = W$Count.Freq,distance = T,R = 2)
+  energy_aitch = energy::eqdist.e(x = mds_dist,sizes = W$Count.Freq,distance = T)
   estat = energy_aitch$statistic
-  ii = energy_aitch$perms
-  scaledEnergyE_mds = estat#as.numeric((estat-mean(ii))/sd(ii)) ##
+  # ii = energy_aitch$perms
+  EnergyE_mds = estat#as.numeric((estat-mean(ii))/sd(ii)) ##
 
 
 
@@ -247,7 +247,7 @@ featureSlectionPerformance = function(tbl,
                               NumParts = netStr,raw_energyStat = estat,
                               mds_normEnergy = normE_mds$H,
                               mds_rawEnergy = normE_mds$Estat,
-                              scaleEStat_mds = scaledEnergyE_mds,
+                              scaleEStat_mds = EnergyE_mds,
                               PermanovaF = pmv$F[1],
                               PermanovaF_mds = pmv_mds$F[1],
                               betaDispF = bd$`F value`[1],
@@ -257,7 +257,7 @@ featureSlectionPerformance = function(tbl,
                               energyCor = dcr,
                               energyBiasedCorrecCor = bcd,
                               combinedF = as.numeric(f2+f1),
-                              ScaledF = allFeatures_scaledF,
+                              eqdist = allFeatures_eqdist,
                               netDiamByStrength = ns),
     graph = g
   )
