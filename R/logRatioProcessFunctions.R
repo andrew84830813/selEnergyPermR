@@ -84,7 +84,6 @@ fastImputeZeroes <-
 #'
 #' @param compmat a matrix/data.frame with counts (sample x features)
 #' @param mxSparsePercent thresold for percent of samples a feature must be present with at least 1 count
-#' @param ncountRequired number or counts to consider a feature as present
 #'
 #' @examples
 #' getFeats_bySparsity()
@@ -97,7 +96,7 @@ fastImputeZeroes <-
 #' @export
 getFeats_bySparsity <-
   function(compmat,mxSparsePercent = .5,ncountRequired = 1){
-    zeroFeats = compmat<ncountRequired
+    zeroFeats = compmat==0
     zeroFeats = colSums(zeroFeats)
     sparseThreshold = round(mxSparsePercent*nrow(compmat))
     keep = zeroFeats[zeroFeats<=sparseThreshold]
