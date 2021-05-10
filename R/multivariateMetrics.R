@@ -3,7 +3,6 @@
 #'
 #' Modifies the energy::eqdist.etest to return permuation distribution
 #'
-#' @useDynLib selEnergyPermR
 #'
 #' @param x sorted matrix with n-samples
 #' @param sizes class sizes

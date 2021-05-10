@@ -3,7 +3,6 @@
 #'
 #' A sparse non parametric association test for compositional/omics data  (Hinton (2021))
 #'
-#' @useDynLib selEnergyPermR
 #'
 #' @importFrom magrittr %>%
 #' @param inputData xxx
