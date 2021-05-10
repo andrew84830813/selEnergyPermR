@@ -97,7 +97,7 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   ## if dispersion effects are detected the the search optimizes combinedF
   ## if dispersion not detected then the search optimizes the scaled F
   if(is.null(optimizationMetric)){
-    optimizationMetric = if_else(bd1$tab$`Pr(>F)`[1]<alpha_,"combinedF","scale")
+    optimizationMetric = dplyr::if_else(bd1$tab$`Pr(>F)`[1]<alpha_,"combinedF","scale")
     message("dispersion p = ",round(bd1$tab$`Pr(>F)`[1],3)," ;  optmization is:  ", optimizationMetric)
   }
 
