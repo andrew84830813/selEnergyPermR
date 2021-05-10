@@ -145,13 +145,13 @@ getLogRatios <-
       cm = colMeans(z)
       #compute logratios
       s=lapply(1:nrow(c), function(x) cm[c[x,2]] * cm[c[x,4]] * log( z[,c[x,2]] / z[,c[x,4]] ) )
-      s = as.data.table(s)
+      s = data.table::as.data.table(s)
       colnames(s) = as.character(ratioList[,3])
       s = as.data.frame(s)
     }else{
       #compute logratios
       s=lapply(1:nrow(c), function(x) log( z[,c[x,2]] / z[,c[x,4]] ) )
-      s = as.data.table(s)
+      s = data.table::as.data.table(s)
       colnames(s) = as.character(ratioList[,3])
       s = as.data.frame(s)
     }
