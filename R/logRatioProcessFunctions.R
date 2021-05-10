@@ -258,7 +258,7 @@ stageData <-
       colnames(negCases)=c.names
       xtrain=rbind(posCases,negCases)
     }
-    ytrain1 = as.factor(if_else(ytrain==classes[1],1,0))
+    ytrain1 = as.factor(dplyr::if_else(ytrain==classes[1],1,0))
 
 
 
