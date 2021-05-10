@@ -23,7 +23,7 @@ calcLogRatio <-
     colnames(mat) = colnames(df2[,-1])
     rownames(mat) =  colnames(df2[,-1])
     mat[lower.tri(mat,diag = T)]=-1000000000000000000999
-    mat = subset(melt(mat),value!=-1000000000000000000999)
+    mat = subset(reshape2::melt(mat),value!=-1000000000000000000999)
     mat = tidyr::unite(data = mat,col = Ratio,sep = "___",c("Var1","Var2"))
     keyRats = dplyr::separate(data.frame(mat),1,into = c("Num","Denom"),sep = "___",remove = F)
     el_= data.frame(keyRats$Num,keyRats$Denom,keyRats$Ratio)
@@ -242,7 +242,7 @@ stageData <-
     ############################################################################*
     ####    Data Preprocessing - Zero Imputation ####
     ############################################################################*
-    xtrain1_imputed = fastImputeZeroes(clo(xtrain))
+    xtrain1_imputed = fastImputeZeroes(compositions::clo(xtrain))
     allTrain.method = data.frame(Status = ytrain1,xtrain1_imputed)
     ############# ZERO IMPUTATION (END) ###########################
 
