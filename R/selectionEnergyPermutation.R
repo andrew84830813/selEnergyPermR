@@ -51,7 +51,7 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   lrs.scaled = scale(lrs.train[,-1])
   lrs.train = data.frame(Status = lrs.train[,1],lrs.scaled)
 
-  dcv  = diffCompVarRcpp::finalDCV(logRatioMatrix = lrs.train,includeInfoGain = dcv_useInfoGain,nfolds = dcv_nfold,numRepeats = dcv_numRepeats )
+  dcv  = diffCompVarRcpp::dcvScores(logRatioMatrix = lrs.train,includeInfoGain = dcv_useInfoGain,nfolds = dcv_nfold,numRepeats = dcv_numRepeats )
   dcv_ = dcv$rawDCV
   keep = dcv$lrs
   end = which.max(keep$nDistinct)
