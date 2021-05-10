@@ -212,8 +212,8 @@ featureSlectionPerformance = function(tbl,
     el_= data.frame(keyRats$Num,keyRats$Denom,keyRats$Ratio)
     g = igraph::graph_from_edgelist(as.matrix(el_[,1:2]),directed = T)
     g = igraph::simplify(g, remove.loops = TRUE,
-                         edge.attr.comb = igraph_opt("edge.attr.comb"))
-    E(g)$weight = dplyr::if_else((imp.df$Imp)<0,0,(imp.df$Imp))
+                         edge.attr.comb = igraph::igraph_opt("edge.attr.comb"))
+    igraph::E(g)$weight = dplyr::if_else((imp.df$Imp)<0,0,(imp.df$Imp))
 
     ns = igraph::diameter(g)/length(igraph::strength(g))
     netStr = length(igraph::strength(g))
@@ -247,7 +247,7 @@ featureSlectionPerformance = function(tbl,
                               PermanovaF = pmv$F[1],
                               PermanovaF_mds = pmv_mds$F[1],
                               betaDispF = bd$tab$F[1],
-                              betaDispF_mds = bd_mds$`F value`[1],
+                              betaDispF_mds = bd_mds$tab$F[1],
                               AnosimR = ano$statistic,
                               EnergyF = enf$statistic,
                               energyCor = dcr,
