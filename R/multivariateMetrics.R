@@ -125,7 +125,7 @@ featureSlectionPerformance = function(tbl,
   cc = combinat::combn2(as.character(classes))
   labels = tbl$Status
   c.df = data.frame(Count.labels = classes)
-  W = data.frame(Count = (table(labels)),Weight = clo(table(labels)))
+  W = data.frame(Count = (table(labels)),Weight = compositions::clo(table(labels)))
   W = left_join(c.df,W)
   N = sum(W$Count.Freq)
   d = parallelDist::parDist(as.matrix(mat[,-1])) ## p here is eqv to the alpha in the (rizzo/szekely - energy distanmce advanced review feb 2016 review paper)
@@ -299,7 +299,7 @@ normalizedEnergy <-
       arrange(desc(Labels))
     classes = unique(labels)
     cc = combinat::combn2(as.character(classes))
-    W = data.frame(Count = (table(labels)),Weight = clo(table(labels)))
+    W = data.frame(Count = (table(labels)),Weight = compositions::clo(table(labels)))
     N = sum(W$Count.Freq)
 
     Estat = c()
