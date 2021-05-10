@@ -133,9 +133,9 @@ getLogRatios <-
 
     #Map Num and denom feature locations
     num = data.frame(f = ratioList[,1])
-    num = left_join(num,features)
+    num = dplyr::left_join(num,features)
     den = data.frame(f = ratioList[,2])
-    den = left_join(den,features)
+    den = dplyr::left_join(den,features)
 
     #num and denom feature table with location
     c = cbind(num,den)
