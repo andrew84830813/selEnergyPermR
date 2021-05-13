@@ -6,9 +6,9 @@
 #' @param df a data.frame where the first column contains class labels and the remaining p columns are features
 #'
 #' @examples
+#' \dontrun{
 #' calcLogRatio()
-#'
-#' @references
+#'}
 #'
 #' @return A data frame with all choose(p,2) log ratios
 #'
@@ -17,6 +17,10 @@ calcLogRatio <-
   function(df){
     df1 = stageData(featureMatrix = df[,-1],labels = df[,1],
                     permuteLabel = F,permuteFeatures = F)
+
+    value = NULL
+    Ratio = NULL
+
     df2 = df1$allData
     fn = length(colnames(df2[,-1]))
     mat = matrix(rep(0,fn*fn),nrow = fn)
@@ -39,11 +43,15 @@ calcLogRatio <-
 #'
 #' Impute zeroes using a lightly modified multiplicative replacement strategy (Martin-Fernandez (2003))
 #'
+#' @importFrom foreach %dopar%
+#'
 #' @param df.cdata2 count or relative abundance matrix where rows are samples and columns are features
 #' @param impFactor delta imputed value
 #'
 #' @examples
+#' \dontrun{
 #' fastImputeZeroes()
+#'}
 #'
 #' @references
 #' Martin-Fernandez, J. A., Barcelo-Vidal, C., & Pawlowsky-Glahn, V. (2003). Dealing with Zeros and Missing Values in Compositional Data Sets Using Nonparametric Imputation. Mathematical Geology, 26.
@@ -54,7 +62,7 @@ calcLogRatio <-
 fastImputeZeroes <-
   function(df.cdata2, impFactor = 1e-11){
 
-    require(doParallel)
+    i  = NULL
 
     cn = colnames(df.cdata2)
     rn = rownames(df.cdata2)
@@ -86,16 +94,16 @@ fastImputeZeroes <-
 #' @param mxSparsePercent thresold for percent of samples a feature must be present with at least 1 count
 #'
 #' @examples
+#' \dontrun{
 #' getFeats_bySparsity()
-#'
-#' @references
+#'}
 #'
 #'
 #' @return A vector of colnames of non sparse features to keep
 #'
 #' @export
 getFeats_bySparsity <-
-  function(compmat,mxSparsePercent = .5,ncountRequired = 1){
+  function(compmat,mxSparsePercent = .5){
     zeroFeats = compmat==0
     zeroFeats = colSums(zeroFeats)
     sparseThreshold = round(mxSparsePercent*nrow(compmat))
@@ -110,11 +118,12 @@ getFeats_bySparsity <-
 #'
 #' @param z a matrix/data.frame with imputed relative abundace data (sample x features)
 #' @param ratioList a data.frame with columns eqaul to the numerator of log-ratio, denominator of log-ratio, and the log-ratio names
+#' @param weighted should a weighted log-ratio be computed
 #'
 #' @examples
+#' \dontrun{
 #' getLogRatios()
-#'
-#' @references
+#' }
 #'
 #'
 #' @return A data frame with simulated data from two classes
@@ -169,9 +178,9 @@ getLogRatios <-
 #' @param permuteLabel should lass labels be permuted
 #'
 #' @examples
+#' \dontrun{
 #' processCompData()
-#'
-#' @references
+#' }
 #'
 #'
 #' @return A list containing:\tabular{ll}{
@@ -218,9 +227,9 @@ processCompData <-
 #' @param permuteFeatures should features be permuted
 #'
 #' @examples
+#' \dontrun{
 #' stageData()
-#'
-#' @references
+#'}
 #'
 #'
 #' @return A list containing:\tabular{ll}{

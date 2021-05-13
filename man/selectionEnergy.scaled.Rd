@@ -50,7 +50,7 @@ use_pipe(export = TRUE)
 A sparse non parametric association test for compositional/omics data  (Hinton (2021))
 }
 \examples{
-selectionEnergy.scaled()
+\dontrun{
 Example parms:
 inputData = dat
 nreps_energy = 1e4
@@ -62,6 +62,8 @@ dcv_useInfoGain = T
 dcv_nfold = 5
 dcv_numRepeats = 1
 alpha = .05
+}
+
 
 }
 \references{

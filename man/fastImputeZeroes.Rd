@@ -18,7 +18,9 @@ A matrix with multiplicatively imputed zeroes
 Impute zeroes using a lightly modified multiplicative replacement strategy (Martin-Fernandez (2003))
 }
 \examples{
+\dontrun{
 fastImputeZeroes()
+}
 
 }
 \references{

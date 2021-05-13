@@ -20,9 +20,11 @@ simFromExpData.largeMeanShft(
 
 \item{n2}{number of samples class 2}
 
-\item{perFixedFeatures}{xxx}
+\item{perFixedFeatures}{percent of lowest variance features to shift mean vector}
 
-\item{shiftPercent}{xxx}
+\item{featureShiftPercent}{percent to shift mean vector of the 'perFixedFeatures' number of features}
+
+\item{seed}{random seed}
 }
 \value{
 A data frame with simulated data
@@ -31,7 +33,9 @@ A data frame with simulated data
 Simulate  location shift in data assuming  count data are distributied as an additive logistics normal distribution on the simplex (see Aitichinson (1986))
 }
 \examples{
+\dontrun{
 simFromExpData.largeMeanShft()
+}
 
 }
 \references{

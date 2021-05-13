@@ -22,7 +22,9 @@ A data frame with simulated data from two classes
 Simulate data from two classes using scenario-5 (Hinton (2021)). Data are sampled from the additive logistics normal distribution (see Aitichinson (1986))
 }
 \examples{
+\dontrun{
 scenario5(n1=40,n2=40,dms_ = 75)
+}
 
 }
 \references{

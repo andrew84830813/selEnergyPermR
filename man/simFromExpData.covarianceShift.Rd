@@ -11,7 +11,7 @@ simFromExpData.covarianceShift(
   maxCov = 32,
   seed = 8272008,
   perFixedFeatures = 0.8,
-  shiftPercent = 1.25
+  shiftPercent = 1
 )
 }
 \arguments{
@@ -21,11 +21,13 @@ simFromExpData.covarianceShift(
 
 \item{n2}{number of samples class 2}
 
-\item{maxCov}{xxx}
+\item{maxCov}{controls the dispersion of \eqn{U} in the formation of the covariance matrix see Hinton(2021)}
 
-\item{perFixedFeatures}{xxx}
+\item{seed}{random seed}
 
-\item{shiftPercent}{xxx}
+\item{perFixedFeatures}{percent of lowest variance features to shift mean vector}
+
+\item{shiftPercent}{percent to shift mean vector of the 'perFixedFeatures' number of features}
 }
 \value{
 A data frame with simulated data
@@ -34,7 +36,9 @@ A data frame with simulated data
 Simulate  covariance shift in data assuming  count data are distributied as an additive logistics normal distribution on the simplex (see Aitichinson (1986))
 }
 \examples{
+\dontrun{
 simFromExpData.covarianceShift()
+}
 
 }
 \references{

@@ -4,7 +4,7 @@
 \alias{getFeats_bySparsity}
 \title{Get non-sparse feature}
 \usage{
-getFeats_bySparsity(compmat, mxSparsePercent = 0.5, ncountRequired = 1)
+getFeats_bySparsity(compmat, mxSparsePercent = 0.5)
 }
 \arguments{
 \item{compmat}{a matrix/data.frame with counts (sample x features)}
@@ -18,9 +18,9 @@ A vector of colnames of non sparse features to keep
 Computes names of features present above a thresold
 }
 \examples{
+\dontrun{
 getFeats_bySparsity()
-
 }
-\references{
+
 
 }

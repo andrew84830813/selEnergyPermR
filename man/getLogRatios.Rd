@@ -10,6 +10,8 @@ getLogRatios(z, ratioList, weighted = F)
 \item{z}{a matrix/data.frame with imputed relative abundace data (sample x features)}
 
 \item{ratioList}{a data.frame with columns eqaul to the numerator of log-ratio, denominator of log-ratio, and the log-ratio names}
+
+\item{weighted}{should a weighted log-ratio be computed}
 }
 \value{
 A data frame with simulated data from two classes
@@ -18,9 +20,9 @@ A data frame with simulated data from two classes
 Calculate specific log-ratios defined in a matrix where rows are ratio and columns describe the numerator, denominator and log-ratio names
 }
 \examples{
+\dontrun{
 getLogRatios()
-
 }
-\references{
+
 
 }

@@ -22,7 +22,9 @@ A data frame with simulated data from two classes
 Simulate data for two classes using scenario-1(Hinton (2021)). Data are sampled from the Dirichilet with different alpha vectors
 }
 \examples{
-scenario2(n1=40,n2=40,dms_ = 75)
+\dontrun{
+scenario1(n1=40,n2=40,dms_ = 75)
+}
 
 }
 \references{

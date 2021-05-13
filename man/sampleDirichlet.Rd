@@ -22,7 +22,9 @@ A data frame with simulated data
 Simulate data from additive logistics normal distribution (see Aitichinson (1986))
 }
 \examples{
+\dontrun{
 sampleDirichlet()
+}
 
 }
 \references{

@@ -18,7 +18,9 @@ A data frame with all choose(p,2) log ratios
 Normalizes the enrgy statistic as described in Rizzo (2000)
 }
 \examples{
+\dontrun{
 normalizedEnergy()
+}
 
 }
 \references{

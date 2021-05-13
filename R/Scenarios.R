@@ -9,7 +9,9 @@
 #' @param seed random seed
 #'
 #' @examples
-#' scenario2(n1=40,n2=40,dms_ = 75)
+#' \dontrun{
+#' scenario1(n1=40,n2=40,dms_ = 75)
+#'}
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -44,9 +46,13 @@ scenario1 <-
 #' @param n2 number of samples in class 2
 #' @param dms_ number of features
 #' @param seed random seed
+#' @param avgReads avg number reads; simulates libray size using a negative binomial distribution
+#' @param size_ dispersion parameter for negative binomial distribution
 #'
 #' @examples
+#' \dontrun{
 #' scenario2(n1=40,n2=40,dms_ = 75)
+#'}
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -60,15 +66,15 @@ scenario2 <-
     set.seed(seed)
     factScale = 0.01
 
-    libSize = rnbinom(n = n1,size = size_,mu = avgReads)
+    libSize = stats::rnbinom(n = n1,size = size_,mu = avgReads)
     s1 = data.frame()
     for(n in 1:n1){
       t25 = 10
-      a = rep(runif(n = dms_,min = 1,max = 5))
-      a[1] = runif(1,3000,5000)
+      a = rep(stats::runif(n = dms_,min = 1,max = 5))
+      a[1] = stats::runif(1,3000,5000)
       #a[2] = runif(1,9000,12500)
       for (i in 2:t25) {
-        a[i] = runif(1,500,1500)
+        a[i] = stats::runif(1,500,1500)
       }
       #Random Sparsty
       a[t25:dms_] = sample(a[t25:dms_],replace = F)
@@ -79,14 +85,14 @@ scenario2 <-
     }
 
 
-    libSize = rnbinom(n = n2,size = size_,mu = avgReads)
+    libSize = stats::rnbinom(n = n2,size = size_,mu = avgReads)
     s2 = data.frame()
     for(n in 1:n2){
       t25 = 10
-      a = rep(runif(n = dms_,min = 1,max = 5))
-      a[1] = runif(1,12500,17500)
+      a = rep( stats::runif(n = dms_,min = 1,max = 5))
+      a[1] = stats::runif(1,12500,17500)
       for (i in 2:t25) {
-        a[i] = runif(1,500,1500)
+        a[i] = stats::runif(1,500,1500)
       }
       #Random Sparsty
       a[t25:dms_] = sample(a[t25:dms_],replace = F)
@@ -114,7 +120,10 @@ scenario2 <-
 #' @param seed random seed
 #'
 #' @examples
+#' \dontrun{
 #' scenario3(n1=40,n2=40,dms_ = 75)
+#'}
+#'
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -135,16 +144,16 @@ scenario3 <-
     diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
     sigma_ = t(sigma_)
     diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
-    sigma_ = nearPD(sigma_)$mat
+    sigma_ = Matrix::nearPD(sigma_)$mat
 
-    U = matrix(runif(dms_*dms_,0,32/(dms_^2)),nrow = dms_)
+    U = matrix(stats::runif(dms_*dms_,0,32/(dms_^2)),nrow = dms_)
     U_ = sigma_ + U
-    U_ = nearPD(U_)$mat
+    U_ = Matrix::nearPD(U_)$mat
     eg = min(eigen(as.matrix(sigma_))$values)
     sig = min(eigen(as.matrix(U_))$values)
     dd = min(eg,sig)+0.05
-    sig1 = nearPD( sigma_ + dd*diag(dms_) )$mat
-    sig2 = nearPD( sigma_+ U + dd*diag(dms_) )$mat
+    sig1 = Matrix::nearPD( sigma_ + dd*diag(dms_) )$mat
+    sig2 = Matrix::nearPD( sigma_+ U + dd*diag(dms_) )$mat
 
     s1 = sampleAddLogisticNormal(n = n1,dims_ = dms_,mu = mu_ ,sigma = sig1,sigmaScale = 1,sampleName = "S1")
     s2 = sampleAddLogisticNormal(n = n2,dims_ = dms_,mu = mu2,sigma = sig2,sigmaScale = 1,sampleName = "S2")
@@ -166,7 +175,9 @@ scenario3 <-
 #' @param seed random seed
 #'
 #' @examples
+#' \dontrun{
 #' scenario4(n1=40,n2=40,dms_ = 75)
+#'}
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -187,7 +198,7 @@ scenario4 <-
     sigma_ = diag(dms_)
 
 
-    U = matrix(runif(dms_*dms_,0,32/dms_^2),nrow = dms_)
+    U = matrix(stats::runif(dms_*dms_,0,32/dms_^2),nrow = dms_)
     U_ = sigma_ + U
     U_ = Matrix::nearPD(U_)$mat
     eg = min(eigen(as.matrix(sigma_))$values)
@@ -216,7 +227,9 @@ scenario4 <-
 #' @param seed random seed
 #'
 #' @examples
+#' \dontrun{
 #' scenario5(n1=40,n2=40,dms_ = 75)
+#'}
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -237,16 +250,16 @@ scenario5 <-
     diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
     sigma_ = t(sigma_)
     diag(sigma_[-1,])<-rep(.2,ncol(sigma_)-1)
-    sigma_ = nearPD(sigma_)$mat
+    sigma_ = Matrix::nearPD(sigma_)$mat
 
-    U = matrix(runif(dms_*dms_,0,32),nrow = dms_)
+    U = matrix(stats::runif(dms_*dms_,0,32),nrow = dms_)
     U_ = sigma_ + U
-    U_ = nearPD(U_)$mat
+    U_ = Matrix::nearPD(U_)$mat
     eg = min(eigen(as.matrix(sigma_))$values)
     sig = min(eigen(as.matrix(U_))$values)
     dd = min(eg,sig)+0.05
-    sig1 = nearPD( sigma_ + dd*diag(dms_) )$mat
-    sig2 = nearPD( sigma_+ U + dd*diag(dms_) )$mat
+    sig1 = Matrix::nearPD( sigma_ + dd*diag(dms_) )$mat
+    sig2 = Matrix::nearPD( sigma_+ U + dd*diag(dms_) )$mat
 
     s1 = sampleAddLogisticNormal(n = n1,dims_ = dms_,mu = mu_ ,sigma = sig1,sigmaScale = 1,sampleName = "S1")
     s2 = sampleAddLogisticNormal(n = n2,dims_ = dms_,mu = mu2,sigma = sig2,sigmaScale = 1,sampleName = "S2")
@@ -266,7 +279,9 @@ scenario5 <-
 #' @param sampleName class names for data
 #'
 #' @examples
+#' \dontrun{
 #' sampleDirichlet()
+#'}
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -302,12 +317,16 @@ sampleDirichlet <-
 #'
 #' @param n number of samples
 #' @param dims_ number of features/dimensions
+#' @param mu mean vector of length 'dims_'
 #' @param sigma dims_ x dims_ covaraince matrix
 #' @param sigmaScale scale factor for covaraince matrix
 #' @param sampleName class names for data
 #'
 #' @examples
-#' sampleAddLogisticNormal(n = 40,dims_ = 75,mu = rep(0,75) ,sigma = diag(1,75),sigmaScale = 1,sampleName = "S1")
+#' \dontrun{
+#' sampleAddLogisticNormal(n = 40,dims_ = 75,mu = rep(0,75) ,
+#'   sigma = diag(1,75),sigmaScale = 1,sampleName = "S1")
+#'}
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -335,12 +354,15 @@ sampleAddLogisticNormal <-
 #' @param raMatrix empirical relative abundance matrix
 #' @param n1 number of samples class 1
 #' @param n2 number of samples class 2
-#' @param maxCov xxx
-#' @param perFixedFeatures xxx
-#' @param shiftPercent xxx
+#' @param maxCov controls the dispersion of \eqn{U} in the formation of the covariance matrix see Hinton(2021)
+#' @param perFixedFeatures percent of lowest variance features to shift mean vector
+#' @param shiftPercent percent to shift mean vector of the 'perFixedFeatures' number of features
+#' @param seed random seed
 #'
 #' @examples
+#' \dontrun{
 #' simFromExpData.covarianceShift()
+#' }
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -350,25 +372,25 @@ sampleAddLogisticNormal <-
 #' @export
 #'
 simFromExpData.covarianceShift <-
-  function( raMatrix ,n1 = 30 , n2 = 30,maxCov = 32,seed= 08272008,perFixedFeatures = .8,shiftPercent = 1.25){
+  function( raMatrix ,n1 = 30 , n2 = 30,maxCov = 32,seed= 08272008,perFixedFeatures = .8,shiftPercent = 1){
 
     set.seed(seed)
 
-
-    y.alr = easyCODA::ALR( raMatrix )$LR
-    alr.cov = cov(y.alr)
+    var = NULL
+    y.alr = compositions::alr( raMatrix )
+    alr.cov = stats::cov(y.alr)
     var.alr = data.frame(ratio = names(diag(alr.cov)),var = diag(alr.cov)) %>%
-      arrange(-var)
+      dplyr::arrange(-var)
     y.alr = subset(y.alr,select = var.alr$ratio)
     alr.mean = colMeans(y.alr)
-    sigma_ = cov(y.alr)
+    sigma_ = stats::cov(y.alr)
     nfeats = length(alr.mean)
 
 
     # #Adjust cov matrices
-    U = matrix(runif(nfeats*nfeats,0,maxCov ),nrow = nfeats)
+    U = matrix(stats::runif(nfeats*nfeats,0,maxCov ),nrow = nfeats)
     U_ = sigma_ + U
-    U_ = nearPD(U_)$mat
+    U_ = Matrix::nearPD(U_)$mat
     eg = min(eigen(as.matrix(sigma_))$values)
     sig = min(eigen(as.matrix(U_))$values)
     dd = min(eg,sig)+0.05
@@ -379,7 +401,7 @@ simFromExpData.covarianceShift <-
     alr.mean = colMeans(y.alr)
     alr.sim = MASS::mvrnorm(n = n1,mu = alr.mean,Sigma = sig1)
     alr.mean2 = colMeans(alr.sim)
-    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    alr.ra = compositions::alrInv(alr.sim); colnames(alr.ra) = colnames(raMatrix)
     s1 = data.frame(Status = "S1",alr.ra)
 
 
@@ -387,7 +409,7 @@ simFromExpData.covarianceShift <-
     hold = round(length(alr.mean2)*perFixedFeatures)
     alr.mean2[(hold+1):nfeats] = shiftPercent * alr.mean[(hold+1):nfeats]
     alr.sim = MASS::mvrnorm(n = n2,mu = alr.mean2,Sigma = sig2)
-    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    alr.ra = compositions::alrInv(alr.sim); colnames(alr.ra) = colnames(raMatrix)
     s2 = data.frame(Status = "S2",alr.ra)
 
 
@@ -405,11 +427,14 @@ simFromExpData.covarianceShift <-
 #' @param raMatrix empirical relative abundance matrix
 #' @param n1 number of samples class 1
 #' @param n2 number of samples class 2
-#' @param perFixedFeatures xxx
-#' @param shiftPercent xxx
+#' @param featureShiftPercent percent to shift mean vector of the 'perFixedFeatures' number of features
+#' @param seed random seed
+#' @param perFixedFeatures percent of lowest variance features to shift mean vector
 #'
 #' @examples
+#' \dontrun{
 #' simFromExpData.largeMeanShft()
+#' }
 #'
 #' @references
 #' Aitchinson, J 1986
@@ -420,21 +445,23 @@ simFromExpData.covarianceShift <-
 #'
 simFromExpData.largeMeanShft <-
   function( raMatrix ,n1 = 30 , n2 = 30,perFixedFeatures = 0.95,featureShiftPercent = 1.25,seed = 08272008){
+    mu = NULL
+    var = NULL
     set.seed(seed)
-    y.alr = easyCODA::ALR( raMatrix )$LR
-    alr.cov = cov(y.alr)
+    y.alr =  compositions::alr( raMatrix )
+    alr.cov = stats::cov(y.alr)
     var.alr = data.frame(ratio = names(diag(alr.cov)),var = diag(alr.cov)) %>%
-      arrange(-var)
+      dplyr::arrange(-var)
     y.alr = subset(y.alr,select = var.alr$ratio)
     alr.mean = colMeans(y.alr)
-    alr.cov = cov(y.alr)
-    cv = mean(abs(sd(var.alr$var)/alr.mean))
+    alr.cov = stats::cov(y.alr)
+    cv = mean(abs( stats::sd(var.alr$var)/alr.mean))
 
 
     alr.sim = MASS::mvrnorm(n = n1,mu = alr.mean,Sigma = alr.cov)
     alr.mean2 = colMeans(alr.sim)
-    alr.cov = cov(alr.sim)
-    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    alr.cov = stats::cov(alr.sim)
+    alr.ra =  compositions::alrInv(alr.sim); colnames(alr.ra) = colnames(raMatrix)
     s1 = data.frame(Status = "S1",alr.ra)
 
     ####
@@ -442,14 +469,9 @@ simFromExpData.largeMeanShft <-
     hold = round(length(alr.mean2)*perFixedFeatures)
     alr.mean2[(hold+1):nfeats] = featureShiftPercent * alr.mean[(hold+1):nfeats]
     alr.sim = MASS::mvrnorm(n = n2,mu = alr.mean2,Sigma = alr.cov)
-    alr.ra = easyCODA::invALR(alr.sim); colnames(alr.ra) = colnames(raMatrix)
+    alr.ra =  compositions::alrInv(alr.sim); colnames(alr.ra) = colnames(raMatrix)
     s2 = data.frame(Status = "S2",alr.ra)
-    ####
-
-    # ## Real data =
-    # sreal = data.frame(Status = "Real",dat[,-1])
-    # df = rbind(s1,sreal)
-    # ###########################
+    ###
 
 
     rbind(s1,s2)

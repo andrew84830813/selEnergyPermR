@@ -16,9 +16,8 @@ A data frame with all choose(p,2) log ratios
 Compute all pairwise log-ratios froma  data.frame where rows=samples and columns=features/parts
 }
 \examples{
+\dontrun{
 calcLogRatio()
-
 }
-\references{
 
 }

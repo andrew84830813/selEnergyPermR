@@ -17,7 +17,7 @@
 #' @param alpha_ xxx
 #'
 #' @examples
-#' selectionEnergy.scaled()
+#' \dontrun{
 #' Example parms:
 #' inputData = dat
 #' nreps_energy = 1e4
@@ -29,6 +29,8 @@
 #' dcv_nfold = 5
 #' dcv_numRepeats = 1
 #' alpha = .05
+#' }
+#'
 #'
 #' @references
 #' Hinton, A.L., Mucha, P.J., (2021). Simultaneous variable selection and group association testing in sparse high dimensional omics data. XXXX.
@@ -48,6 +50,9 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
                                   targetFeats = NULL,
                                   patience = 25,alpha_ = 0.05){
 
+
+  Status = NULL
+  i = NULL
 
   ## Pre Process Input Data
   inputData$i  = 1:nrow(inputData)
@@ -139,7 +144,7 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
 
   }else{
 
-    metrics = featureSlectionPerformance(data.frame(Status = lbs,ph),plot_ = F,trainModel = F)
+    metrics = featureSlectionPerformance(data.frame(Status = lbs,ph),plot_ = F)
     e_stat = metrics$performance[optimizationMetric]
     estat = e_stat
     newF = metrics$performance[optimizationMetric]
@@ -195,7 +200,7 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
 
       }else{
 
-        metrics = featureSlectionPerformance(data.frame(Status = lbs,ph),plot_ = F,trainModel = F)
+        metrics = featureSlectionPerformance(data.frame(Status = lbs,ph),plot_ = F)
         e_stat = metrics$performance[optimizationMetric]
         estat = e_stat
         newF = metrics$performance[optimizationMetric]

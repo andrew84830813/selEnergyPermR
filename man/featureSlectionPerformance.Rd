@@ -36,11 +36,15 @@ A data frame with all choose(p,2) log ratios
 Computes various multivariate statistics to be used in permutation testing
 }
 \examples{
+\dontrun{
 featureSlectionPerformance()
+}
 
 }
 \references{
 Szekely, G. J. and Rizzo, M. L. (2004) Testing for Equal Distributions in High Dimension, InterStat, November (5).
+
 M. L. Rizzo and G. J. Szekely (2010). DISCO Analysis: A Nonparametric Extension of Analysis of Variance, Annals of Applied Statistics, Vol. 4, No. 2, 1034-1055. http://dx.doi.org/10.1214/09-AOAS245
+
 Szekely, G. J. (2000) Technical Report 03-05: E-statistics: Energy of Statistical Samples, Department of Mathematics and Statistics, Bowling Green State University.
 }

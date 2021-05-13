@@ -26,9 +26,9 @@ A list containing:\tabular{ll}{
 Close data and Impute zeroes. Allow permuting labels or columns for permutation distribution analysis
 }
 \examples{
+\dontrun{
 stageData()
-
 }
-\references{
+
 
 }

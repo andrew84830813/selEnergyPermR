@@ -14,6 +14,10 @@ scenario2(n1 = 30, n2 = 30, dms_ = 75, seed, avgReads = 1e+07, size_ = 1)
 \item{dms_}{number of features}
 
 \item{seed}{random seed}
+
+\item{avgReads}{avg number reads; simulates libray size using a negative binomial distribution}
+
+\item{size_}{dispersion parameter for negative binomial distribution}
 }
 \value{
 A data frame with simulated data from two classes
@@ -22,7 +26,9 @@ A data frame with simulated data from two classes
 Simulate data for two classes using scenario-2(Hinton (2021)). Data are sampled from the Dirichilet and converted to counts where library size is sample from a negative binomial dsitribution
 }
 \examples{
+\dontrun{
 scenario2(n1=40,n2=40,dms_ = 75)
+}
 
 }
 \references{

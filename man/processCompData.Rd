@@ -28,9 +28,9 @@ A list containing:\tabular{ll}{
 Removes sparse features based on a provided threshold,computes \eqn{\delta} impute factor for zero impuation and returns the minority and majority class for binary group data
 }
 \examples{
+\dontrun{
 processCompData()
-
 }
-\references{
+
 
 }

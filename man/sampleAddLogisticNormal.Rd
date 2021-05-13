@@ -11,6 +11,8 @@ sampleAddLogisticNormal(n, dims_, mu, sigma, sigmaScale = 1, sampleName)
 
 \item{dims_}{number of features/dimensions}
 
+\item{mu}{mean vector of length 'dims_'}
+
 \item{sigma}{dims_ x dims_ covaraince matrix}
 
 \item{sigmaScale}{scale factor for covaraince matrix}
@@ -24,7 +26,10 @@ A data frame with simulated data
 Simulate data from additive logistics normal distribution (see Aitichinson (1986))
 }
 \examples{
-sampleAddLogisticNormal(n = 40,dims_ = 75,mu = rep(0,75) ,sigma = diag(1,75),sigmaScale = 1,sampleName = "S1")
+\dontrun{
+sampleAddLogisticNormal(n = 40,dims_ = 75,mu = rep(0,75) ,
+  sigma = diag(1,75),sigmaScale = 1,sampleName = "S1")
+}
 
 }
 \references{
