@@ -64,7 +64,7 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
 
 
   ## compute Logratio and Run DCV
-  lrs.train = calcLogRatio(inputData)
+  lrs.train = calcLogRatio(df = inputData)
   lrs.scaled = scale(lrs.train[,-1])
   lrs.train = data.frame(Status = lrs.train[,1],lrs.scaled)
 
@@ -112,7 +112,6 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   baseSet = 1:3
   cn = colnames(allFeats)
   ph = subset(allFeats,select =  cn[baseSet])
-
   ###----------------------------*
   ### Compute estat
   ###----------------------------*
@@ -132,13 +131,13 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
 
   }else if (optimizationMetric == "combinedF"){
 
-    a.df = data.frame(Type = lbs)
+    a.df = data.frame(Type = as.character(lbs))
     d.compdat = parallelDist::parDist(as.matrix(ph),method = "euclidean")
-    pmv1 = vegan::adonis(d.compdat~Type,data = a.df,permutations = 2)
-    f1 = pmv1$aov.tab$F.Model[1]
+    pmv1 = vegan::adonis2(d.compdat~Type,data = a.df,permutations = 2)
+    f1 = pmv1$F[1]
     mod = vegan::betadisper(d.compdat,group = lbs)
     bd1 = vegan::permutest(mod,permutations = 1)
-    f2 = bd1$statistic
+    f2 = as.numeric(bd1$statistic)
     newF = f1+f2
     e_stat = newF
 
@@ -188,13 +187,13 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
 
       }else if (optimizationMetric == "combinedF"){
 
-        a.df = data.frame(Type = lbs)
+        a.df = data.frame(Type = as.character(lbs))
         d.compdat = parallelDist::parDist(as.matrix(ph),method = "euclidean")
-        pmv1 = vegan::adonis(d.compdat~Type,data = a.df,permutations = 1)
-        f1 = pmv1$aov.tab$F.Model[1]
+        pmv1 = vegan::adonis2(d.compdat~Type,data = a.df,permutations = 2)
+        f1 = pmv1$F[1]
         mod = vegan::betadisper(d.compdat,group = lbs)
         bd1 = vegan::permutest(mod,permutations = 1)
-        f2 = bd1$statistic
+        f2 = as.numeric(bd1$statistic)
         newF = f1+f2
         e_stat = newF
 
