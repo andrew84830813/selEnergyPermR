@@ -89,8 +89,6 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   ## All features
   ##-----------------------------------------*
   cn = colnames(allFeats)
-  metrics = featureSlectionPerformance(tbl = data.frame(Status = labels,allFeats),plot_ = F)
-  allFeatureMetrics = metrics$performance
   d.compdat = parallelDist::parDist(as.matrix(allFeats),method = "euclidean")
   a.df = data.frame(Type = labels)
   mod = vegan::betadisper(d.compdat,group = labels)
@@ -141,13 +139,6 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
     newF = f1+f2
     e_stat = newF
 
-  }else{
-
-    metrics = featureSlectionPerformance(data.frame(Status = lbs,ph),plot_ = F)
-    e_stat = metrics$performance[optimizationMetric]
-    estat = e_stat
-    newF = metrics$performance[optimizationMetric]
-
   }
   ## set max value
   maxF = newF
@@ -196,13 +187,6 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
         f2 = as.numeric(bd1$statistic)
         newF = f1+f2
         e_stat = newF
-
-      }else{
-
-        metrics = featureSlectionPerformance(data.frame(Status = lbs,ph),plot_ = F)
-        e_stat = metrics$performance[optimizationMetric]
-        estat = e_stat
-        newF = metrics$performance[optimizationMetric]
 
       }
 
