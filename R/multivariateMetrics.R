@@ -49,112 +49,18 @@ featureSlectionPerformance = function(tbl,
     mat[,-1] = scale(mat[,-1])
   }
 
-  classes = c(mat[1,1],mat[nrow(mat),1])
-  cc = combinat::combn2(as.character(classes))
-  labels = tbl$Status
-  c.df = data.frame(Count.labels = classes)
-  W = data.frame(Count = (table(labels)),Weight = compositions::clo(table(labels)))
-  W = dplyr::left_join(c.df,W)
-  N = sum(W$Count.Freq)
-  d = parallelDist::parDist(as.matrix(mat[,-1])) ## p here is eqv to the alpha in the (rizzo/szekely - energy distanmce advanced review feb 2016 review paper)
-  energy_aitch = energy::eqdist.e(x = d,sizes = W$Count.Freq,distance = T)
-  # estat = energy_aitch$statistic
-  # ii = energy_aitch$perms
-  allFeatures_eqdist = energy_aitch#as.numeric((estat-mean(ii))/sd(ii)) ##
-
-
-
-  #dispersion test
-  labels = mat[,1]
-  mod = vegan::betadisper(d,group = labels)
-  bd = vegan::permutest(mod,permutations  = 2)
-  #permanova
-  a.df = data.frame(Type = labels)
-  pmv = vegan::adonis2(d~Type,data = a.df,permutations = 0)
-  ## ANOSIM
-  ano = vegan::anosim(x = d,grouping = labels,permutations = 0)
-
-  ###----------------------------
-  ## mds projection
-  ###----------------------------
-  mds = stats::cmdscale(d,k = 2 )
-  mds_dist = stats::dist((mds))
-  normE_mds = normalizedEnergy(mds,labels)
-  mod = vegan::betadisper(mds_dist,group = labels)
-  bd_mds = vegan::permutest(mod)
-  pmv_mds = vegan::adonis2(mds_dist~Type,data = a.df,permutations = 0)
-
-  #scaled mds e stat
-  energy_aitch = energy::eqdist.e(x = mds_dist,sizes = W$Count.Freq,distance = T)
-  estat = energy_aitch
-  # ii = energy_aitch$perms
-  EnergyE_mds = estat#as.numeric((estat-mean(ii))/sd(ii)) ##
-
-
-
-  ## distance cov and cor test for indpedence
-  tt = as.matrix(as.integer(as.factor(mat[,1]))-1)
-  bcd = energy::bcdcor(as.matrix(mat[,-1]),as.matrix(tt))
-  dcr = energy::dcor(as.matrix(mat[,-1]),as.matrix(tt))
-
 
   ## Energy disco
-  mat.ph =  dplyr::arrange(data.frame(tbl),dplyr::desc(Status))
-  mat.ph[,1] = factor(mat.ph[,1])
-  levs = data.frame(Labels = unique(mat.ph[,1]))
-  labels = mat.ph[,1]
-  tb = data.frame((table(mat.ph[,1] )))
+  mat[,1] = factor(mat[,1])
+  levs = data.frame(Labels = unique(mat[,1]))
+  labels = mat[,1]
+  tb = data.frame((table(mat[,1] )))
   colnames(tb)[1] = "Labels"
   sz = dplyr::left_join(levs,tb)
-  d1 = stats::dist(mat.ph[,-1])
-  #energy::eqdist.etest(d,sizes = sz$Freq,distance = T,R = 100,method = "discoB")
-  enf = energy::disco(x = d1,factors = mat.ph$Status,distance = T,R = 2)
+  d = stats::dist(mat[,-1])
+  enf = energy::disco(x = d,factors = mat[,1],distance = T,R = 2)
 
 
-
-  ns = NA
-  g = NA
-  netStr = NA
-  if(plot_){
-
-    ##-----------------------------------------*
-    ## LR Network ####
-    ##-----------------------------------------*
-    feature.df = tbl
-    #### Kruskall Test
-    krus.test_df = data.frame()
-    # tbl =  mst.empirical$features[[1]]
-    lrs_ = data.frame(feature.df[,-1])
-    colnames(lrs_) = colnames(feature.df)[-1]
-    cnames = colnames(lrs_)
-    for(i in 1:ncol(lrs_)){
-      ph = stats::kruskal.test(x = lrs_[,i],g  = factor(feature.df[,1]))
-      ph = data.frame(Ratio =cnames[i],pval = ph$p.value,Statistic = ph$statistic )
-      krus.test_df = rbind(krus.test_df,ph)
-    }
-    #network construction
-    krus.test_df$p.adjust = stats::p.adjust(krus.test_df$pval,method = "BH")
-    pval_level = 0.05
-    fdrLevel =  max(krus.test_df$p.adjust[krus.test_df$pval <= pval_level])
-    krus.test_df$signf = dplyr::if_else(krus.test_df$p.adjust>0.05,F,T)
-    #Importance df
-    imp.df = data.frame(Ratio = krus.test_df$Ratio,Imp = krus.test_df$Statistic)
-    keyRats = tidyr::separate(imp.df,1,into = c("Num","Denom"),sep = "___",remove = F)
-    el_= data.frame(keyRats$Num,keyRats$Denom,keyRats$Ratio)
-    g = igraph::graph_from_edgelist(as.matrix(el_[,1:2]),directed = T)
-    g = igraph::simplify(g, remove.loops = TRUE,
-                         edge.attr.comb = igraph::igraph_opt("edge.attr.comb"))
-    igraph::E(g)$weight = dplyr::if_else((imp.df$Imp)<0,0,(imp.df$Imp))
-
-    ns = igraph::diameter(g)/length(igraph::strength(g))
-    netStr = length(igraph::strength(g))
-
-
-    plot(g,layout = igraph::layout_with_fr,vertex.size = log(1/compositions::clo(igraph::strength(g)))+1,
-         vertex.label.cex = .75,edge.curved = .2,edge.width = igraph::E(g)$weight*.15,
-         edge.arrow.size = .25,edge.arrow.width = 1)
-    plot(mod,label = F)
-  }
 
 
   ##z test combined beta and perma
@@ -171,22 +77,8 @@ featureSlectionPerformance = function(tbl,
     performance =  data.frame(Method = Method_Name,
                               Scenario = scenario,
                               NumRatios = ncol(tbl)-1,
-                              NumParts = netStr,raw_energyStat = estat,
-                              mds_normEnergy = normE_mds$H,
-                              mds_rawEnergy = normE_mds$Estat,
-                              scaleEStat_mds = EnergyE_mds,
-                              PermanovaF = pmv$F[1],
-                              PermanovaF_mds = pmv_mds$F[1],
-                              betaDispF = bd$tab$F[1],
-                              betaDispF_mds = bd_mds$tab$F[1],
-                              AnosimR = ano$statistic,
                               EnergyF = enf$statistic,
-                              energyCor = dcr,
-                              energyBiasedCorrecCor = bcd,
-                              combinedF = as.numeric(f2+f1),
-                              eqdist = allFeatures_eqdist,
-                              netDiamByStrength = ns),
-    graph = g
+                              combinedF = as.numeric(f2+f1))
   )
   )
 
