@@ -25,6 +25,7 @@ Imports:
     igraph (>= 1.2.5),
     MASS (>= 7.3.53),
     Matrix (>= 1.3.0)
+Remotes: andrew84830813/diffCompVarRcpp   
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1.9001
