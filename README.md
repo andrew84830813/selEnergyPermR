@@ -3,50 +3,90 @@
 
 # selEnergyPermR
 
-Hinton, A.L.  & Mucha, P. J., A simultaneous feature selection and compositional association test for detecting sparse associations in high-dimensional metagenomic data. 12 July 2021, PREPRINT (Version 1) available at Research Square  https://doi.org/10.21203/rs.3.rs-703177/v1
-
 <!-- badges: start -->
 <!-- badges: end -->
 
-The goal of selEnergyPermR is to …
+Hinton, A.L. & Mucha, P. J., A simultaneous feature selection and
+compositional association test for detecting sparse associations in
+high-dimensional metagenomic data. 12 July 2021, PREPRINT (Version 1)
+available at Research Square
+<https://doi.org/10.21203/rs.3.rs-703177/v1>
+
+The goal of selEnergyPermR package is to provide an easy to use set of
+reusable functions for performing the selEnergyPerm methods for sparse
+association testing in compositional data.
+
+## Prerequisites
+
+In order to use the ‘selEnergyPermR’ package the ‘diffCompVarRcpp’
+package must first be installed. This package contains the cpp
+implementation of the differential compositonal variation scoring
+algorithm required for efficiently ranking logratios.
+
+``` r
+install.packages("devtools")
+devtools::install_github(repo = "andrew84830813/diffCompVarRcpp",
+                         dependencies = T)
+
+```
 
 ## Installation
 
-You can install the released version of selEnergyPermR from
-[CRAN](https://CRAN.R-project.org) with:
+Next install the latest version of selEnergyPermR from github with:
 
 ``` r
-install.packages("selEnergyPermR")
-```
-
-And the development version from [GitHub](https://github.com/) with:
-
-``` r
-# install.packages("devtools")
-devtools::install_github("andrew84830813/selEnergyPermR")
+devtools::install_github(repo = "andrew84830813/selEnergyPermR",
+                         dependencies = T)
 ```
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is a basic example which demonstrate how to use ‘selEnergyPermR’
+for testing associations in count compositional data:
 
 ``` r
+library(diffCompVarRcpp)
 library(selEnergyPermR)
+
 ## basic example code
 ```
 
-What is special about using `README.Rmd` instead of just `README.md`?
-You can include R chunks like so:
+Load the example dataset and view the first 5 rows and columns
 
 ``` r
-summary(cars)
-#>      speed           dist       
-#>  Min.   : 4.0   Min.   :  2.00  
-#>  1st Qu.:12.0   1st Qu.: 26.00  
-#>  Median :15.0   Median : 36.00  
-#>  Mean   :15.4   Mean   : 42.98  
-#>  3rd Qu.:19.0   3rd Qu.: 56.00  
-#>  Max.   :25.0   Max.   :120.00
+data("Uguanda_PIH")
+
+(Uguanda_PIH[1:5,1:5])
+#>   Status
+#> 1    pos
+#> 2    neg
+#> 3    pos
+#> 4    pos
+#> 5    pos
+#>   Abditibacteriota.Abditibacteria.Abditibacteriales.Abditibacteriaceae.Abditibacterium
+#> 1                                                                                    0
+#> 2                                                                                    0
+#> 3                                                                                    0
+#> 4                                                                                    0
+#> 5                                                                                    0
+#>   Actinobacteriota.Acidimicrobiia.null.null.null
+#> 1                                              0
+#> 2                                              0
+#> 3                                              0
+#> 4                                              0
+#> 5                                              0
+#>   Actinobacteriota.Actinobacteria.Actinomycetales.Actinomycetaceae.Actinomyces
+#> 1                                                                            0
+#> 2                                                                            0
+#> 3                                                                            0
+#> 4                                                                            0
+#> 5                                                                            0
+#>   Actinobacteriota.Actinobacteria.Actinomycetales.Actinomycetaceae.F0332
+#> 1                                                                      0
+#> 2                                                                      0
+#> 3                                                                      0
+#> 4                                                                      0
+#> 5                                                                      0
 ```
 
 You’ll still need to render `README.Rmd` regularly, to keep `README.md`
