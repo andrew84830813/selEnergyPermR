@@ -33,6 +33,7 @@ install.packages("devtools")
 install.packages("ggplot2")
 install.packages("permute")
 install.packages("ggthemes")
+install.packages("rstatix")   
 
 devtools::install_github(repo = "andrew84830813/diffCompVarRcpp",
                          dependencies = T)
@@ -164,7 +165,7 @@ lrs = calcLogRatio(dat)
 #> Joining, by = "f"
 #> Joining, by = "f"
 #>    user  system elapsed 
-#>    0.17    0.00    0.17
+#>    0.14    0.00    0.14
 ```
 
 ## Visulaize Dataset
@@ -197,16 +198,24 @@ set.seed(08272008)
 
 
 ## Define Number of Permutations
-permRep = 100
+permRep = 150
 seeds = permute::shuffleSet(nrow(dat),nset = permRep)
 seeds = data.frame(t(seeds))
 ```
 
 ### Apply SelEnergyPerm to compute test statistic and idenfity key taxa
 
+*Note::* Since selEnergyPerm uses a forward greedy optimal feature
+selection approach there may be some variation in the exact logratios
+returned between machines. This can be caused by an accumulation of
+numerical errors and may vary from machine to machine.
+
 ``` r
-## run SelEnergyPerm
-sep.true = selEnergyPermR::selectionEnergy.scaled(inputData = dat)
+## Run SelEnergyPerm
+sep.true = selEnergyPermR::selectionEnergy.scaled(inputData = dat,patience = 500,dcv_nfold = 1)
+### **Note here we set the number of cross-validation folds to one for the DCV scoring (dcv_nfold=1). 
+###   This is done to improve reproducibility of results between machines. 
+## Extract Results
 res = data.frame(i =1:nrow(sep.true$optimResult),sep.true$optimResult)
 ggplot(res,aes(i,optF))+
   geom_line(col = "red")+
@@ -254,19 +263,24 @@ knitr::kable(testStat.df)
 
 | Type      |    Seed | Exp.Name | rep | num\_ratios |    tstat | optMetric |
 |:----------|--------:|:---------|----:|------------:|---------:|:----------|
-| empirical | 8272008 | Tutorial |   1 |          10 | 32.98152 | combinedF |
+| empirical | 8272008 | Tutorial |   1 |          16 | 38.34488 | combinedF |
 
 ### Compute Null Distribution
 
 Here we use Monte-Carlo sampling from the permutation distribution to
 test significance of the sparse association. We recommend at least 150
-permutations.
+permutations. To start, you can estimate your machines computational
+time by running 10 permutations and proceeding according. Computational
+time will depend on processor speed and the number of core needed. The
+total time needed for 150 permutations on a laptop with and 8th gen I9
+processor with a single core and 32GB RAM is provided below for
+reference.
 
 ``` r
 ## Null Results ####
 seed_ = 08272208
 nullPerf = data.frame()
-nreps = 10
+nreps = 150
 null.testStat = data.frame()
 system.time({
   for(r in 1:nreps){
@@ -276,7 +290,7 @@ system.time({
       ## Run selection Energy Routine on permuted data
       null_data = dat
       null_data[,1] = null_data[seeds[,r],1]
-      sep.null = selEnergyPermR::selectionEnergy.scaled(inputData = null_data,
+      sep.null = selEnergyPermR::selectionEnergy.scaled(inputData = null_data,dcv_nfold = 1,
                                         targetFeats = targetRatios,
                                         optimizationMetric = optMetric)
 
@@ -310,10 +324,10 @@ system.time({
   }
 })
 #>    user  system elapsed 
-#>   35.81    0.67   35.51
+#>  428.10    4.09  417.53
 ```
 
-## Visulaize SelEnergyPerm Association Test Results
+## Visualize SelEnergyPerm Association Test Results
 
 ``` r
 
@@ -325,7 +339,7 @@ ph = rbind(t1.null,t1.empi[1,])
 testStat =  unique(t1.empi$tstat)
 dt = t1.null$tstat
 1-ecdf(dt)(testStat)
-#> [1] 0
+#> [1] 0.01333333
 mm = mean(dt)
 ss = sd(dt)
 pval = 1-pnorm(testStat,mean = mm,sd = ss)
