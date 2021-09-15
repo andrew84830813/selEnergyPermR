@@ -74,9 +74,9 @@ selectionEnergy.scaled = function(inputData , optimizationMetric = NULL,
   keep = dcv$lrs
   end = which.max(keep$nDistinct)
   keep = keep[1:end,]
-  # select top N tsuch that every part is included at least once; subset that explains 100% of total variace
-  trainData2 = subset(lrs.train,select = keep$Ratio)
-  # compute max span tree for indepenet set
+  # select top N such that every part is included at least once; subset that explains 100% of total variace
+  trainData2 = subset(lrs.train,select = as.character(keep$Ratio))
+  # compute max span tree for independent set
   allFeats = diffCompVarRcpp::mstAll(featMatrix = trainData2,dcvRanking = keep)
   labels = inputData[,1]
   message("Forward Selection ranking of logratio sets..")
