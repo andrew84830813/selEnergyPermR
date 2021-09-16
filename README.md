@@ -117,10 +117,12 @@ message("\n Number of OTUs remaining = ",ncol(y) )
 #>  Number of OTUs remaining = 63
 ```
 
-## Aggregate data to a the Genus Level
+## Aggregate data to the Genus Level
 
-This step is optional as any level can be tested (i.e. Phylum,Class,
-Order, etc..) as well as the overall OTU composition
+This step is in general optional as any level can be tested
+(i.e. Phylum,Class, Order, etc..) as well as the overall OTU
+composition. Here we test at the genus level which balances the
+trade-off between interpretability and computational time.
 
 ``` r
 ## Aggregate to Genus
@@ -165,10 +167,10 @@ lrs = calcLogRatio(dat)
 #> Joining, by = "f"
 #> Joining, by = "f"
 #>    user  system elapsed 
-#>    0.14    0.00    0.14
+#>    0.14    0.01    0.25
 ```
 
-## Visulaize Dataset
+## Visualize Dataset using first two dimensions of PCA
 
 ``` r
 rt = prcomp(lrs[,-1])
@@ -192,6 +194,10 @@ ggplot(coords.df,aes(PC1,PC2,col = Group))+
 
 ### Define Class Label Permutations for computing the null distribution
 
+\*\* Note more restricted permutation design can be added here as
+required by the experimental design (e.g to use with strata for nested
+designs). Review the ‘permute’ R package documentation for more detail.
+
 ``` r
 ## Set seed for reproducibility
 set.seed(08272008)
@@ -205,7 +211,7 @@ seeds = data.frame(t(seeds))
 
 ### Apply SelEnergyPerm to compute test statistic and idenfity key taxa
 
-*Note::* Since selEnergyPerm uses a forward greedy optimal feature
+*Note:* Since selEnergyPerm uses a forward greedy optimal feature
 selection approach there may be some variation in the exact logratios
 returned between machines. This can be caused by an accumulation of
 numerical errors and may vary from machine to machine.
@@ -324,7 +330,7 @@ system.time({
   }
 })
 #>    user  system elapsed 
-#>  428.10    4.09  417.53
+#>  423.50    3.86  416.38
 ```
 
 ## Visualize SelEnergyPerm Association Test Results
@@ -455,9 +461,6 @@ ggplot(rp,aes(taxa,log_ratio,fill  = Status,label = p.adj.signif))+
   geom_text(nudge_y = 1,size = 3,fontface = "bold",y = -8,col = "red" )+
   scale_y_continuous(limits = c(-8.5,7))+
   ylab("Denominator enriched <-- Log Ratio --> Numerator Enriched")+
-  #geom_hline(yintercept = 0)+
-  ggsci::scale_fill_lancet()+
-  ggsci::scale_color_lancet()+
   theme(legend.position = "top",plot.title = element_text(size = 7,hjust = .5,face = "bold"),
         #plot.margin = margin(0.5, 0.5, 0.5, 0.5),
         axis.title = element_text(size = 7),
@@ -491,7 +494,7 @@ E(g)$weight = if_else((imp.df$Imp)<0,0,(imp.df$Imp))
 w_degree  = strength(g,mode = "total")
 plot(g,layout = igraph::layout.kamada.kawai,
      vertex.label.cex = .65,
-     vertex.size = igraph::strength(g,mode = "all")*.5+3,
+     vertex.size = igraph::strength(g,mode = "all")*.15+3,
      edge.curved = .2,
      edge.arrow.size = .25)
 ```
